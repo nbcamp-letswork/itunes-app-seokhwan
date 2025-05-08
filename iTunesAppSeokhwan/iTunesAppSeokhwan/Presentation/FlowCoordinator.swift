@@ -16,8 +16,10 @@ final class FlowCoordinator {
 
     func start(completion: @escaping (UIViewController) -> Void) {
         let viewModel = diContainer.makeHomeViewModel()
-        let homeViewController = HomeViewController(viewModel: viewModel)
+        let viewController = HomeViewController(viewModel: viewModel)
+        let navigationController = UINavigationController(rootViewController: viewController)
+        navigationController.navigationBar.prefersLargeTitles = true
 
-        completion(homeViewController)
+        completion(navigationController)
     }
 }

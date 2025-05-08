@@ -24,4 +24,9 @@ final class HomeViewController: UIViewController {
     override func loadView() {
         view = homeView
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        navigationItem.largeTitleDisplayMode = .always
+        navigationItem.title = "Music"
+    }
 }

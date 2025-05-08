@@ -21,8 +21,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         flowCoordinator = FlowCoordinator(diContainer: diContainer)
 
-        flowCoordinator?.start { [weak self] homeViewController in
-            self?.window?.rootViewController = homeViewController
+        flowCoordinator?.start { [weak self] rootViewController in
+            self?.window?.rootViewController = rootViewController
             self?.window?.makeKeyAndVisible()
         }
     }
