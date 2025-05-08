@@ -10,6 +10,8 @@ import UIKit
 final class HomeViewController: UIViewController {
     private let viewModel: HomeViewModel
 
+    private let homeView = HomeView()
+
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -19,7 +21,7 @@ final class HomeViewController: UIViewController {
         fatalError()
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func loadView() {
+        view = homeView
     }
 }
