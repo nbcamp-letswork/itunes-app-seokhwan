@@ -8,11 +8,7 @@
 import Foundation
 
 final class ITunesAPIService {
-    static let shared = ITunesAPIService()
-
     private let basePath = "https://itunes.apple.com/search"
-
-    private init() {}
 
     func fetchMusics(for term: String) async -> Result<[MusicResponse], NetworkError> {
         let urlString = basePath + "?media=music&term=\(term)&entity=song"

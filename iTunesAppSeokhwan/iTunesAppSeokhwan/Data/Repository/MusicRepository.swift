@@ -9,7 +9,11 @@ import Foundation
 import RxSwift
 
 final class MusicRepository {
-    private let service = ITunesAPIService.shared
+    private let service: ITunesAPIService
+
+    init(service: ITunesAPIService) {
+        self.service = service
+    }
 
     func fetchMusics(for term: String) -> Single<[Music]> {
         Single.create { [weak self] single in

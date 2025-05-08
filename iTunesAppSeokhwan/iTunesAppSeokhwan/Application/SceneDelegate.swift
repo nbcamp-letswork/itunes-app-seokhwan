@@ -9,6 +9,8 @@ import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
+    private let diContainer = DIContainer()
+    private var flowCoordinator: FlowCoordinator?
 
     func scene(
         _ scene: UIScene,
@@ -16,9 +18,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions,
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = HomeViewController()
-        window?.makeKeyAndVisible()
+        flowCoordinator = FlowCoordinator(diContainer: diContainer)
+
+        flowCoordinator?.start { [weak self] homeViewController in
+            self?.window?.rootViewController = homeViewController
+            self?.window?.makeKeyAndVisible()
+        }
     }
 }
