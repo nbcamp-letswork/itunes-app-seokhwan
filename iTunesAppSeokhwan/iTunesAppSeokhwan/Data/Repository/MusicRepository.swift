@@ -35,17 +35,22 @@ final class MusicRepository {
     }
 
     private func makeMusics(from response: [MusicResponse]) -> [Music] {
-        response.map { Music(
-            id: $0.trackID,
-            title: $0.trackName,
-            artist: $0.artistName,
-            albumTitle: $0.collectionName,
-            genre: $0.primaryGenreName,
-            releaseDate: Date(from: $0.releaseDate),
-            runningTime: $0.trackTimeMillis,
-            albumThumbnailImagePath: $0.artworkURL60,
-            albumOriginalImagePath: $0.artworkURL100,
-            previewAudioPath: $0.previewURL
-        ) }
+        response.map {
+            let formatter = ISO8601DateFormatter()
+            let releaseDate = formatter.date(from: $0.releaseDate) ?? Date(timeIntervalSince1970: 0)
+
+            return Music(
+                id: $0.trackID,
+                title: $0.trackName,
+                artist: $0.artistName,
+                albumTitle: $0.collectionName,
+                genre: $0.primaryGenreName,
+                releaseDate: releaseDate,
+                runningTime: $0.trackTimeMillis,
+                albumThumbnailImagePath: $0.artworkURL60,
+                albumOriginalImagePath: $0.artworkURL100,
+                previewAudioPath: $0.previewURL,
+            )
+        }
     }
 }
