@@ -17,6 +17,6 @@ final class DIContainer {
     }
 
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel()
+        HomeViewModel(repository: repository)
     }
 }

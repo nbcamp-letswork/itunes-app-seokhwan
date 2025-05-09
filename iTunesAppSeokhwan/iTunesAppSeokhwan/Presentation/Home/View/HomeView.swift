@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class HomeView: UIView {
-    private var dataSource: UICollectionViewDiffableDataSource<HomeSection, MusicItem>?
+    private var dataSource: UICollectionViewDiffableDataSource<HomeSection, HomeViewModel.MusicDisplayModel>?
 
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -41,6 +41,18 @@ final class HomeView: UIView {
 
     required init?(coder: NSCoder) {
         fatalError()
+    }
+
+    func updateMusics(with musics: [[HomeViewModel.MusicDisplayModel]]) {
+        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeViewModel.MusicDisplayModel>()
+        let sections: [HomeSection] = [.spring, .summer, .autumn, .winter]
+
+        snapshot.appendSections(sections)
+        zip(musics, sections).forEach { music, section in
+            snapshot.appendItems(music, toSection: section)
+        }
+
+        dataSource?.apply(snapshot)
     }
 }
 
@@ -97,33 +109,9 @@ private extension HomeView {
             }
         }
 
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, MusicItem>()
+        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeViewModel.MusicDisplayModel>()
         snapshot.appendSections([.spring, .summer, .autumn, .winter])
-        snapshot.appendItems([
-            MusicItem(id: 0, title: "Test0", artist: "Test0", albumImagePath: ""),
-            MusicItem(id: 1, title: "Test1", artist: "Test1", albumImagePath: ""),
-            MusicItem(id: 2, title: "Test2", artist: "Test2", albumImagePath: ""),
-            MusicItem(id: 3, title: "Test3", artist: "Test3", albumImagePath: ""),
-        ], toSection: .spring)
-        snapshot.appendItems([
-            MusicItem(id: 4, title: "Test4", artist: "Test4", albumImagePath: ""),
-            MusicItem(id: 5, title: "Test5", artist: "Test5", albumImagePath: ""),
-            MusicItem(id: 6, title: "Test6", artist: "Test6", albumImagePath: ""),
-            MusicItem(id: 7, title: "Test7", artist: "Test7", albumImagePath: ""),
-        ], toSection: .summer)
-        snapshot.appendItems([
-            MusicItem(id: 8, title: "Test8", artist: "Test8", albumImagePath: ""),
-            MusicItem(id: 9, title: "Test9", artist: "Test9", albumImagePath: ""),
-            MusicItem(id: 10, title: "Test10", artist: "Test10", albumImagePath: ""),
-            MusicItem(id: 11, title: "Test11", artist: "Test11", albumImagePath: ""),
-        ], toSection: .autumn)
-        snapshot.appendItems([
-            MusicItem(id: 12, title: "Test12", artist: "Test12", albumImagePath: ""),
-            MusicItem(id: 13, title: "Test13", artist: "Test13", albumImagePath: ""),
-            MusicItem(id: 14, title: "Test14", artist: "Test14", albumImagePath: ""),
-            MusicItem(id: 15, title: "Test15", artist: "Test15", albumImagePath: ""),
-        ], toSection: .winter)
 
-        dataSource?.apply(snapshot, animatingDifferences: true)
+        dataSource?.apply(snapshot)
     }
 }

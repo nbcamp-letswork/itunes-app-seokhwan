@@ -88,13 +88,6 @@ extension HomeView {
         }
     }
 
-    struct MusicItem: Hashable {
-        let id: Int
-        let title: String
-        let artist: String
-        let albumImagePath: String
-    }
-
     var compositionalLayout: UICollectionViewCompositionalLayout {
         .init { index, _ -> NSCollectionLayoutSection in
             HomeSection(sectionIndex: index).section
