@@ -36,11 +36,7 @@ final class HomeViewModel {
         musics
             .map {
                 $0.map { $0.enumerated().map { (index, element) in
-                    /*
-                     spring(0), autumn(2)은 OriginalImage 사용
-                     summer(1), winter(3)는 ThumbnailImage 사용
-                     */
-                    MusicDisplayModel(from: element, usesOriginalImage: index % 2 == 0)
+                    MusicDisplayModel(entity: element, sectionIndex: index)
                 } }
             }
             .subscribe(onNext: { [weak self] musics in
@@ -75,15 +71,21 @@ extension HomeViewModel {
     }
 
     struct MusicDisplayModel: Hashable {
-        let id: Int
+        let id: String
         let title: String
         let artist: String
         let albumImagePath: String
 
-        init(from entity: Music, usesOriginalImage: Bool) {
-            id = entity.id
+        init(entity: Music, sectionIndex: Int) {
+            id = "\(entity.id)\(sectionIndex)"
             title = entity.title
             artist = entity.artist
+
+            /*
+             spring(0), autumn(2)은 OriginalImage 사용
+             summer(1), winter(3)는 ThumbnailImage 사용
+             */
+            let usesOriginalImage = sectionIndex % 2 == 0
             albumImagePath = usesOriginalImage ? entity.albumOriginalImagePath : entity.albumThumbnailImagePath
         }
     }
