@@ -75,13 +75,13 @@ private extension MusicCardCell {
 
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(albumImageView.snp.bottom).offset(8)
-            make.leading.equalToSuperview().inset(12)
+            make.directionalHorizontalEdges.equalToSuperview().inset(12)
             make.height.equalTo(30)
         }
 
         artistLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom)
-            make.leading.equalTo(titleLabel.snp.leading)
+            make.directionalHorizontalEdges.equalToSuperview().inset(12)
             make.height.equalTo(20)
         }
     }

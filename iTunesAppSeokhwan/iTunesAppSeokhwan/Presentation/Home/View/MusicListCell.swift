@@ -79,7 +79,7 @@ private extension MusicListCell {
 
         stackView.snp.makeConstraints { make in
             make.leading.equalTo(albumImageView.snp.trailing).offset(12)
-            make.centerY.equalToSuperview()
+            make.trailing.centerY.equalToSuperview()
         }
     }
 }
