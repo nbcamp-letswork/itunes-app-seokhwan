@@ -15,7 +15,6 @@ final class MusicListCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1 // TODO: 임시
         return imageView
     }()
 
@@ -50,7 +49,7 @@ final class MusicListCell: UICollectionViewCell {
     }
 
     func update(with item: HomeViewModel.MusicDisplayModel) {
-//        albumImageView.image = UIImage()
+        albumImageView.setImage(from: item.albumImagePath)
         titleLabel.text = item.title
         artistLabel.text = item.artist
     }
@@ -74,7 +73,7 @@ private extension MusicListCell {
     func setConstraints() {
         albumImageView.snp.makeConstraints { make in
             make.leading.centerY.equalToSuperview()
-            make.size.equalTo(60) // ISSUE: 높이 58.67로 지정됨
+            make.size.equalTo(60)
         }
 
         stackView.snp.makeConstraints { make in

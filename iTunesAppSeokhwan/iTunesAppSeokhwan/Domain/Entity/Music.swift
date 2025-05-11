@@ -15,7 +15,6 @@ struct Music {
     let genre: String
     let releaseDate: Date
     let runningTime: Int
-    let albumThumbnailImagePath: String
-    let albumOriginalImagePath: String
+    var albumImagePath: String
     let previewAudioPath: String
 }

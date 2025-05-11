@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 
 final class HomeViewModel {
-    private let repository: MusicRepository
+    private let useCase: FetchMusicUseCase
 
     private let musics = BehaviorRelay<[[Music]]>(value: [])
     private let disposeBag = DisposeBag()
@@ -18,8 +18,8 @@ final class HomeViewModel {
     let action = PublishRelay<Action>()
     let state = BehaviorRelay<State>(value: State())
 
-    init(repository: MusicRepository) {
-        self.repository = repository
+    init(useCase: FetchMusicUseCase) {
+        self.useCase = useCase
         setBindings()
     }
 
@@ -48,16 +48,11 @@ final class HomeViewModel {
     }
 
     private func fetchMusics() {
-        Observable.zip(
-            repository.fetchMusics(for: "봄").asObservable(),
-            repository.fetchMusics(for: "여름").asObservable(),
-            repository.fetchMusics(for: "가을").asObservable(),
-            repository.fetchMusics(for: "겨울").asObservable(),
-        )
-        .subscribe(onNext: { [weak self] spring, summer, autumn, winter in
-            self?.musics.accept([spring, summer, autumn, winter])
-        })
-        .disposed(by: disposeBag)
+        useCase.fetchMusics()
+            .subscribe(onNext: { [weak self] musics in
+                self?.musics.accept(musics)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -80,13 +75,7 @@ extension HomeViewModel {
             id = "\(entity.id)\(sectionIndex)"
             title = entity.title
             artist = entity.artist
-
-            /*
-             spring(0), autumn(2)은 OriginalImage 사용
-             summer(1), winter(3)는 ThumbnailImage 사용
-             */
-            let usesOriginalImage = sectionIndex % 2 == 0
-            albumImagePath = usesOriginalImage ? entity.albumOriginalImagePath : entity.albumThumbnailImagePath
+            albumImagePath = entity.albumImagePath
         }
     }
 }

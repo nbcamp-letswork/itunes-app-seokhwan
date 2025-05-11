@@ -31,6 +31,7 @@ final class HomeView: UIView {
             MusicListCell.self,
             forCellWithReuseIdentifier: MusicListCell.identifier,
         )
+        collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
 

@@ -17,6 +17,7 @@ final class DIContainer {
     }
 
     func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(repository: repository)
+        let useCase = FetchMusicUseCase(repository: repository)
+        return HomeViewModel(useCase: useCase)
     }
 }

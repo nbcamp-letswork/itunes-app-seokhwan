@@ -20,7 +20,7 @@ final class MusicCardCell: UICollectionViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "title"
-        label.font = .boldSystemFont(ofSize: 24)
+        label.font = .boldSystemFont(ofSize: 20)
         return label
     }()
 
@@ -42,7 +42,7 @@ final class MusicCardCell: UICollectionViewCell {
     }
 
     func update(with item: HomeViewModel.MusicDisplayModel) {
-//        albumImageView.image = UIImage()
+        albumImageView.setImage(from: item.albumImagePath)
         titleLabel.text = item.title
         artistLabel.text = item.artist
     }
@@ -56,9 +56,16 @@ private extension MusicCardCell {
     }
 
     func setAttributes() {
-        contentView.layer.borderWidth = 1
+        contentView.backgroundColor = .background
         contentView.layer.cornerRadius = 8
         contentView.clipsToBounds = true
+
+        // Card 그림자 설정
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.15
+        layer.shadowOffset = CGSize(width: 0, height: 4)
+        layer.shadowRadius = 8
+        layer.masksToBounds = false
     }
 
     func setHierarchy() {
@@ -70,11 +77,11 @@ private extension MusicCardCell {
     func setConstraints() {
         albumImageView.snp.makeConstraints { make in
             make.top.directionalHorizontalEdges.equalToSuperview()
-            make.height.equalTo(200) // ISSUE: 높이 198.67로 지정됨
+            make.height.equalTo(200)
         }
 
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(albumImageView.snp.bottom).offset(8)
+            make.top.equalTo(albumImageView.snp.bottom).offset(6)
             make.directionalHorizontalEdges.equalToSuperview().inset(12)
             make.height.equalTo(30)
         }

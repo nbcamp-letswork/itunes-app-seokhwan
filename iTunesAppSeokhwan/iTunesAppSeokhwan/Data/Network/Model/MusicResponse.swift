@@ -19,8 +19,7 @@ struct MusicResponse: Decodable {
     let primaryGenreName: String
     let releaseDate: String
     let trackTimeMillis: Int
-    let artworkURL60: String
-    let artworkURL100: String
+    let artworkURL: String
     let previewURL: String
 
     enum CodingKeys: String, CodingKey {
@@ -31,8 +30,7 @@ struct MusicResponse: Decodable {
         case primaryGenreName
         case releaseDate
         case trackTimeMillis
-        case artworkURL60 = "artworkUrl60"
-        case artworkURL100 = "artworkUrl100"
+        case artworkURL = "artworkUrl100"
         case previewURL = "previewUrl"
     }
 }

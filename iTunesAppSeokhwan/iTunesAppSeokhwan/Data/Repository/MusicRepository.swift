@@ -47,8 +47,7 @@ final class MusicRepository {
                 genre: $0.primaryGenreName,
                 releaseDate: releaseDate,
                 runningTime: $0.trackTimeMillis,
-                albumThumbnailImagePath: $0.artworkURL60,
-                albumOriginalImagePath: $0.artworkURL100,
+                albumImagePath: $0.artworkURL,
                 previewAudioPath: $0.previewURL,
             )
         }
