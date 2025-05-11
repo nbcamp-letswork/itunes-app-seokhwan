@@ -10,6 +10,14 @@ import RxSwift
 import RxRelay
 
 final class HomeViewModel {
+    enum Action {
+        case viewDidLoad
+    }
+
+    struct State {
+        var musics = [[HomeView.HomeItem]]()
+    }
+
     private let useCase: FetchMusicUseCase
 
     private let musics = BehaviorRelay<[[Music]]>(value: [])
@@ -35,9 +43,17 @@ final class HomeViewModel {
 
         musics
             .map {
-                $0.map { $0.enumerated().map { (index, element) in
-                    MusicDisplayModel(entity: element, sectionIndex: index)
-                } }
+                $0.enumerated().map { (index, element) in
+                    element.map {
+                        HomeView.HomeItem(
+                            id: $0.id,
+                            section: HomeView.HomeSection(sectionIndex: index),
+                            title: $0.title,
+                            artist: $0.artist,
+                            albumImagePath: $0.albumImagePath,
+                        )
+                    }
+                }
             }
             .subscribe(onNext: { [weak self] musics in
                 var newState = self?.state.value ?? State()
@@ -53,29 +69,5 @@ final class HomeViewModel {
                 self?.musics.accept(musics)
             })
             .disposed(by: disposeBag)
-    }
-}
-
-extension HomeViewModel {
-    enum Action {
-        case viewDidLoad
-    }
-
-    struct State {
-        var musics = [[MusicDisplayModel]]()
-    }
-
-    struct MusicDisplayModel: Hashable {
-        let id: String
-        let title: String
-        let artist: String
-        let albumImagePath: String
-
-        init(entity: Music, sectionIndex: Int) {
-            id = "\(entity.id)\(sectionIndex)"
-            title = entity.title
-            artist = entity.artist
-            albumImagePath = entity.albumImagePath
-        }
     }
 }

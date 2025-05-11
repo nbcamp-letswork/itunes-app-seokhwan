@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 final class HomeView: UIView {
-    private var dataSource: UICollectionViewDiffableDataSource<HomeSection, HomeViewModel.MusicDisplayModel>?
+    private var dataSource: DataSource?
 
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -37,8 +37,8 @@ final class HomeView: UIView {
         fatalError()
     }
 
-    func updateMusics(with musics: [[HomeViewModel.MusicDisplayModel]]) {
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeViewModel.MusicDisplayModel>()
+    func updateMusics(with musics: [[HomeItem]]) {
+        var snapshot = Snapshot()
         let sections: [HomeSection] = [.spring, .summer, .autumn, .winter]
 
         snapshot.appendSections(sections)
@@ -82,54 +82,10 @@ private extension HomeView {
     }
 
     func setDataSource() {
-        dataSource = .init(collectionView: collectionView) { collectionView, indexPath, item in
-            let section = HomeSection(sectionIndex: indexPath.section)
+        dataSource = DataSource(collectionView: collectionView, cellProvider: cellProvider)
+        dataSource?.supplementaryViewProvider = headerProvider
 
-            switch section {
-            case .spring, .autumn:
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: MusicCardCell.identifier,
-                    for: indexPath,
-                ) as? MusicCardCell else { fatalError() }
-                cell.update(with: item)
-                return cell
-            case .summer, .winter:
-                guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: MusicListCell.identifier,
-                    for: indexPath,
-                ) as? MusicListCell else { fatalError() }
-                cell.update(with: item)
-                return cell
-            }
-        }
-
-        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
-            guard kind == UICollectionView.elementKindSectionHeader else {
-                return UICollectionReusableView()
-            }
-            guard let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: MusicHeader.identifier,
-                for: indexPath,
-            ) as? MusicHeader else { return UICollectionReusableView() }
-
-            let section = HomeSection(sectionIndex: indexPath.section)
-
-            switch section {
-            case .spring:
-                header.update(title: "봄 추천 음악", subtitle: "싱그러운 봄 느낌의 음악 모음")
-            case .summer:
-                header.update(title: "여름 추천 음악", subtitle: "뜨거운 여름에 어울리는 음악")
-            case .autumn:
-                header.update(title: "가을 추천 음악", subtitle: "쓸쓸한 감성의 음악 리스트")
-            case .winter:
-                header.update(title: "겨울 추천 음악", subtitle: "포근한 겨울 감성 음악")
-            }
-
-            return header
-        }
-
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeViewModel.MusicDisplayModel>()
+        var snapshot = Snapshot()
         snapshot.appendSections([.spring, .summer, .autumn, .winter])
 
         dataSource?.apply(snapshot)

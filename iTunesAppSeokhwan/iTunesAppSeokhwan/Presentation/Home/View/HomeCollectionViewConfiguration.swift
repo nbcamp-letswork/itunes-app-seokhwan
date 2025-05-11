@@ -1,5 +1,5 @@
 //
-//  HomeCollectionViewLayout.swift
+//  HomeCollectionViewConfiguration.swift
 //  iTunesAppSeokhwan
 //
 //  Created by youseokhwan on 5/9/25.
@@ -8,6 +8,11 @@
 import UIKit
 
 extension HomeView {
+    typealias DataSource = UICollectionViewDiffableDataSource<HomeSection, HomeItem>
+    typealias CellProvider = DataSource.CellProvider
+    typealias HeaderProvider = DataSource.SupplementaryViewProvider
+    typealias Snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>
+
     enum HomeSection: Hashable {
         case spring
         case summer
@@ -29,6 +34,32 @@ extension HomeView {
             }
         }
 
+        var title: String {
+            switch self {
+            case .spring:
+                return "봄"
+            case .summer:
+                return "여름"
+            case .autumn:
+                return "가을"
+            case .winter:
+                return "겨울"
+            }
+        }
+
+        var subtitle: String {
+            switch self {
+            case .spring:
+                return "싱그러운 봄 느낌의 음악 모음"
+            case .summer:
+                return "뜨거운 여름에 어울리는 음악"
+            case .autumn:
+                return "쓸쓸한 감성의 음악 리스트"
+            case .winter:
+                return "포근한 겨울 감성 음악"
+            }
+        }
+
         var section: NSCollectionLayoutSection {
             switch self {
             case .spring, .autumn:
@@ -38,7 +69,7 @@ extension HomeView {
             }
         }
 
-        var cardSection: NSCollectionLayoutSection {
+        private var cardSection: NSCollectionLayoutSection {
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .fractionalHeight(1.0),
@@ -73,7 +104,7 @@ extension HomeView {
             return section
         }
 
-        var listSection: NSCollectionLayoutSection {
+        private var listSection: NSCollectionLayoutSection {
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
                 heightDimension: .fractionalHeight(1.0 / 3.0),
@@ -110,9 +141,64 @@ extension HomeView {
         }
     }
 
+    struct HomeItem: Hashable {
+        let id: Int
+        let section: HomeSection
+        let title: String
+        let artist: String
+        let albumImagePath: String
+
+        static func == (lhs: HomeItem, rhs: HomeItem) -> Bool {
+            lhs.id == rhs.id && lhs.section == rhs.section
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+            hasher.combine(section)
+        }
+    }
+
     var compositionalLayout: UICollectionViewCompositionalLayout {
         .init { index, _ -> NSCollectionLayoutSection in
             HomeSection(sectionIndex: index).section
+        }
+    }
+
+    var cellProvider: CellProvider {
+        { collectionView, indexPath, item in
+            let section = HomeSection(sectionIndex: indexPath.section)
+
+            switch section {
+            case .spring, .autumn:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: MusicCardCell.identifier,
+                    for: indexPath,
+                ) as? MusicCardCell else { fatalError() }
+                cell.update(with: item)
+                return cell
+            case .summer, .winter:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: MusicListCell.identifier,
+                    for: indexPath,
+                ) as? MusicListCell else { fatalError() }
+                cell.update(with: item)
+                return cell
+            }
+        }
+    }
+
+    var headerProvider: HeaderProvider {
+        { collectionView, kind, indexPath in
+            guard kind == UICollectionView.elementKindSectionHeader,
+                  let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: MusicHeader.identifier,
+                    for: indexPath,
+                  ) as? MusicHeader else { fatalError() }
+            let section = HomeSection(sectionIndex: indexPath.section)
+            header.update(with: section)
+
+            return header
         }
     }
 }
