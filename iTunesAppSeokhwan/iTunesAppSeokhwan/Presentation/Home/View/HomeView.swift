@@ -24,6 +24,11 @@ final class HomeView: UIView {
             collectionViewLayout: compositionalLayout,
         )
         collectionView.register(
+            MusicHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: MusicHeader.identifier,
+        )
+        collectionView.register(
             MusicCardCell.self,
             forCellWithReuseIdentifier: MusicCardCell.identifier,
         )
@@ -82,7 +87,7 @@ private extension HomeView {
         }
 
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom)
+            make.top.equalTo(searchBar.snp.bottom).offset(12)
             make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
             make.bottom.equalToSuperview()
         }
@@ -108,6 +113,32 @@ private extension HomeView {
                 cell.update(with: item)
                 return cell
             }
+        }
+
+        dataSource?.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard kind == UICollectionView.elementKindSectionHeader else {
+                return UICollectionReusableView()
+            }
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: MusicHeader.identifier,
+                for: indexPath,
+            ) as? MusicHeader else { return UICollectionReusableView() }
+
+            let section = HomeSection(sectionIndex: indexPath.section)
+
+            switch section {
+            case .spring:
+                header.update(title: "봄 추천 음악", subtitle: "싱그러운 봄 느낌의 음악 모음")
+            case .summer:
+                header.update(title: "여름 추천 음악", subtitle: "뜨거운 여름에 어울리는 음악")
+            case .autumn:
+                header.update(title: "가을 추천 음악", subtitle: "쓸쓸한 감성의 음악 리스트")
+            case .winter:
+                header.update(title: "겨울 추천 음악", subtitle: "포근한 겨울 감성 음악")
+            }
+
+            return header
         }
 
         var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeViewModel.MusicDisplayModel>()

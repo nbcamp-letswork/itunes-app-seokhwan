@@ -54,10 +54,21 @@ extension HomeView {
                 subitems: [item],
             )
 
+            let headerSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(48),
+            )
+            let header = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: headerSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top,
+            )
+
             let section = NSCollectionLayoutSection(group: group)
             section.orthogonalScrollingBehavior = .groupPaging
             section.interGroupSpacing = 12
-            section.contentInsets = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
+            section.contentInsets = .init(top: 16, leading: 12, bottom: 36, trailing: 12)
+            section.boundarySupplementaryItems = [header]
 
             return section
         }
@@ -79,10 +90,21 @@ extension HomeView {
                 count: 3,
             )
 
+            let headerSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1),
+                heightDimension: .absolute(48),
+            )
+            let header = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: headerSize,
+                elementKind: UICollectionView.elementKindSectionHeader,
+                alignment: .top,
+            )
+
             let section = NSCollectionLayoutSection(group: group)
             section.orthogonalScrollingBehavior = .groupPaging
             section.interGroupSpacing = 12
-            section.contentInsets = .init(top: 12, leading: 12, bottom: 12, trailing: 12)
+            section.contentInsets = .init(top: 12, leading: 12, bottom: 24, trailing: 12)
+            section.boundarySupplementaryItems = [header]
 
             return section
         }
