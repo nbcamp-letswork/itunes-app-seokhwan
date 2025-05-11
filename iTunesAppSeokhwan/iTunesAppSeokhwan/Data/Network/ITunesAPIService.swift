@@ -10,7 +10,7 @@ import Foundation
 final class ITunesAPIService {
     private let basePath = "https://itunes.apple.com/search"
 
-    func fetchMusics(for term: String) async -> Result<[MusicResponse], NetworkError> {
+    func fetchMusic(for term: String) async -> Result<[MusicResponse], NetworkError> {
         let urlString = basePath + "?media=music&term=\(term)&entity=song"
         guard let url = URL(string: urlString) else {
             return .failure(.invalidURL)

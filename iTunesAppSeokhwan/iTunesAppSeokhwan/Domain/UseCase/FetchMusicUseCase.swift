@@ -16,12 +16,12 @@ final class FetchMusicUseCase {
         self.repository = repository
     }
 
-    func fetchMusics() -> Observable<[[Music]]> {
+    func fetchMusic() -> Observable<[[Music]]> {
         Observable.zip(
-            repository.fetchMusics(for: "봄").asObservable(),
-            repository.fetchMusics(for: "여름").asObservable(),
-            repository.fetchMusics(for: "가을").asObservable(),
-            repository.fetchMusics(for: "겨울").asObservable(),
+            repository.fetchMusic(for: "봄").asObservable(),
+            repository.fetchMusic(for: "여름").asObservable(),
+            repository.fetchMusic(for: "가을").asObservable(),
+            repository.fetchMusic(for: "겨울").asObservable(),
         )
         .map { [weak self] spring, summer, autumn, winter in
             guard let self else { return [] }

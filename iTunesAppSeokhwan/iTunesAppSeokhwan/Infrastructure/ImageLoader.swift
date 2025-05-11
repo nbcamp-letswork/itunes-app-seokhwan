@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum ImageLoader {
     static func imageData(from path: String) async -> Data? {
         guard let url = URL(string: path),

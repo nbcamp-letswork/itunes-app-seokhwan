@@ -47,10 +47,10 @@ private extension HomeViewController {
 
     func setBindings() {
         viewModel.state
-            .compactMap(\.musics)
+            .compactMap(\.music)
             .asDriver(onErrorJustReturn: [])
-            .drive { [weak self] musics in
-                self?.homeView.updateMusics(with: musics)
+            .drive { [weak self] music in
+                self?.homeView.updateMusic(with: music)
             }
             .disposed(by: disposeBag)
     }

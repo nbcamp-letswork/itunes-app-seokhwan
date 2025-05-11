@@ -37,12 +37,12 @@ final class HomeView: UIView {
         fatalError()
     }
 
-    func updateMusics(with musics: [[HomeItem]]) {
+    func updateMusic(with music: [[HomeItem]]) {
         var snapshot = Snapshot()
         let sections: [HomeSection] = [.spring, .summer, .autumn, .winter]
 
         snapshot.appendSections(sections)
-        zip(musics, sections).forEach { music, section in
+        zip(music, sections).forEach { music, section in
             snapshot.appendItems(music, toSection: section)
         }
 

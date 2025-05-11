@@ -15,12 +15,12 @@ final class HomeViewModel {
     }
 
     struct State {
-        var musics = [[HomeView.HomeItem]]()
+        var music = [[HomeView.HomeItem]]()
     }
 
     private let useCase: FetchMusicUseCase
 
-    private let musics = BehaviorRelay<[[Music]]>(value: [])
+    private let music = BehaviorRelay<[[Music]]>(value: [])
     private let disposeBag = DisposeBag()
 
     let action = PublishRelay<Action>()
@@ -36,12 +36,12 @@ final class HomeViewModel {
             .subscribe(onNext: { [weak self] action in
                 switch action {
                 case .viewDidLoad:
-                    self?.fetchMusics()
+                    self?.fetchMusic()
                 }
             })
             .disposed(by: disposeBag)
 
-        musics
+        music
             .map {
                 $0.enumerated().map { (index, element) in
                     element.map {
@@ -55,18 +55,18 @@ final class HomeViewModel {
                     }
                 }
             }
-            .subscribe(onNext: { [weak self] musics in
+            .subscribe(onNext: { [weak self] music in
                 var newState = self?.state.value ?? State()
-                newState.musics = musics
+                newState.music = music
                 self?.state.accept(newState)
             })
             .disposed(by: disposeBag)
     }
 
-    private func fetchMusics() {
-        useCase.fetchMusics()
-            .subscribe(onNext: { [weak self] musics in
-                self?.musics.accept(musics)
+    private func fetchMusic() {
+        useCase.fetchMusic()
+            .subscribe(onNext: { [weak self] music in
+                self?.music.accept(music)
             })
             .disposed(by: disposeBag)
     }

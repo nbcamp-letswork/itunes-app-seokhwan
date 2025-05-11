@@ -15,16 +15,16 @@ final class MusicRepository {
         self.service = service
     }
 
-    func fetchMusics(for term: String) -> Single<[Music]> {
+    func fetchMusic(for term: String) -> Single<[Music]> {
         Single.create { [weak self] single in
             guard let self else { return Disposables.create() }
 
             Task {
-                let result = await self.service.fetchMusics(for: term)
+                let result = await self.service.fetchMusic(for: term)
 
                 switch result {
                 case .success(let response):
-                    single(.success(self.makeMusics(from: response)))
+                    single(.success(self.makeMusic(from: response)))
                 case .failure(let error):
                     single(.failure(DomainError.networkError(error.localizedDescription)))
                 }
@@ -34,7 +34,7 @@ final class MusicRepository {
         }
     }
 
-    private func makeMusics(from response: [MusicResponse]) -> [Music] {
+    private func makeMusic(from response: [MusicResponse]) -> [Music] {
         response.map {
             let formatter = ISO8601DateFormatter()
             let releaseDate = formatter.date(from: $0.releaseDate) ?? Date(timeIntervalSince1970: 0)
