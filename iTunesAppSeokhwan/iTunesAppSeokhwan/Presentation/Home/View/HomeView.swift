@@ -23,19 +23,7 @@ final class HomeView: UIView {
             frame: .zero,
             collectionViewLayout: compositionalLayout,
         )
-        collectionView.register(
-            MusicHeader.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: MusicHeader.identifier,
-        )
-        collectionView.register(
-            MusicCardCell.self,
-            forCellWithReuseIdentifier: MusicCardCell.identifier,
-        )
-        collectionView.register(
-            MusicListCell.self,
-            forCellWithReuseIdentifier: MusicListCell.identifier,
-        )
+        collectionView.register(MusicHeader.self, MusicCardCell.self, MusicListCell.self)
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
