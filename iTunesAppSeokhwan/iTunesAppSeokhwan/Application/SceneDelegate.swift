@@ -19,8 +19,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     ) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
-        flowCoordinator = FlowCoordinator(diContainer: diContainer)
+        window?.backgroundColor = .background
 
+        flowCoordinator = FlowCoordinator(diContainer: diContainer)
         flowCoordinator?.start { [weak self] rootViewController in
             self?.window?.rootViewController = rootViewController
             self?.window?.makeKeyAndVisible()

@@ -52,14 +52,9 @@ final class HomeView: UIView {
 
 private extension HomeView {
     func configure() {
-        setAttributes()
         setHierarchy()
         setConstraints()
         setDataSource()
-    }
-
-    func setAttributes() {
-        backgroundColor = .background
     }
 
     func setHierarchy() {
