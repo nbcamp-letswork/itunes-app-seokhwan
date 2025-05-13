@@ -36,16 +36,13 @@ final class MusicRepository {
 
     private func makeMusic(from response: [MusicResponse]) -> [Music] {
         response.map {
-            let formatter = ISO8601DateFormatter()
-            let releaseDate = formatter.date(from: $0.releaseDate) ?? Date(timeIntervalSince1970: 0)
-
-            return Music(
+            Music(
                 id: $0.trackID,
                 title: $0.trackName,
                 artist: $0.artistName,
                 albumTitle: $0.collectionName,
                 genre: $0.primaryGenreName,
-                releaseDate: releaseDate,
+                releaseDate: Date(iso8601String: $0.releaseDate),
                 runningTime: $0.trackTimeMillis,
                 albumImagePath: $0.artworkURL,
                 previewAudioPath: $0.previewURL,
