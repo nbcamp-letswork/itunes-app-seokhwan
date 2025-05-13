@@ -27,18 +27,18 @@ final class FlowCoordinator {
         completion(navigationController)
     }
 
-    func switchTo(_ viewType: ViewType, completion: @escaping (UIViewController) -> Void) {
+    func switchTo(_ viewType: ViewType, in parent: Embeddable) {
+        let childViewController: UIViewController
+
         switch viewType {
         case .home:
-            let homeViewModel = diContainer.makeHomeViewModel()
-            let homeViewController = HomeViewController(viewModel: homeViewModel)
-
-            completion(homeViewController)
+            let viewModel = diContainer.makeHomeViewModel()
+            childViewController = HomeViewController(viewModel: viewModel)
         case .searchResult(let searchText):
-            let searchResultViewModel = diContainer.makeSearchResultViewModel(searchText: searchText)
-            let searchResultViewController = SearchResultViewController(viewModel: searchResultViewModel)
-
-            completion(searchResultViewController)
+            let viewModel = diContainer.makeSearchResultViewModel(searchText: searchText)
+            childViewController = SearchResultViewController(viewModel: viewModel)
         }
+
+        parent.embed(with: childViewController)
     }
 }

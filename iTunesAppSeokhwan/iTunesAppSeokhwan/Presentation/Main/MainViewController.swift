@@ -10,7 +10,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class MainViewController: UIViewController {
+final class MainViewController: UIViewController, Embeddable {
     private weak var coordinator: FlowCoordinator?
     private let disposeBag = DisposeBag()
 
@@ -20,7 +20,7 @@ final class MainViewController: UIViewController {
         return controller
     }()
 
-    private let containerView = UIView()
+    let containerView = UIView()
 
     init(coordinator: FlowCoordinator) {
         self.coordinator = coordinator
@@ -34,25 +34,7 @@ final class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
-        coordinator?.switchTo(.home) { [weak self] viewController in
-            self?.embed(with: viewController)
-        }
-    }
-
-    private func embed(with childViewController: UIViewController) {
-        children.forEach {
-            $0.willMove(toParent: nil)
-            $0.view.removeFromSuperview()
-            $0.removeFromParent()
-        }
-
-        addChild(childViewController)
-        containerView.addSubview(childViewController.view)
-
-        childViewController.view.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        childViewController.didMove(toParent: self)
+        coordinator?.switchTo(.home, in: self)
     }
 }
 
@@ -89,17 +71,15 @@ private extension MainViewController {
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
             .subscribe(onNext: { [weak self] text in
-                self?.coordinator?.switchTo(.searchResult(text)) { [weak self] viewController in
-                    self?.embed(with: viewController)
-                }
+                guard let self else { return }
+                coordinator?.switchTo(.searchResult(text), in: self)
             })
             .disposed(by: disposeBag)
 
         searchController.searchBar.rx.cancelButtonClicked
             .subscribe(onNext: { [weak self] in
-                self?.coordinator?.switchTo(.home) { [weak self] viewController in
-                    self?.embed(with: viewController)
-                }
+                guard let self else { return }
+                coordinator?.switchTo(.home, in: self)
             })
             .disposed(by: disposeBag)
     }
