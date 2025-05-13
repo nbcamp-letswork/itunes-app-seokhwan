@@ -11,13 +11,6 @@ import SnapKit
 final class HomeView: UIView {
     private var dataSource: DataSource?
 
-    private let searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.searchBarStyle = .minimal
-        searchBar.placeholder = "영화, 팟캐스트 검색"
-        return searchBar
-    }()
-
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
@@ -58,19 +51,12 @@ private extension HomeView {
     }
 
     func setHierarchy() {
-        [searchBar, collectionView].forEach {
-            addSubview($0)
-        }
+        addSubview(collectionView)
     }
 
     func setConstraints() {
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
-            make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
-        }
-
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(12)
+            make.top.equalTo(safeAreaLayoutGuide)
             make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
             make.bottom.equalToSuperview()
         }

@@ -20,4 +20,8 @@ final class DIContainer {
         let useCase = FetchMusicUseCase(repository: repository)
         return HomeViewModel(useCase: useCase)
     }
+
+    func makeSearchResultViewModel(searchText: String) -> SearchResultViewModel {
+        SearchResultViewModel(searchText: searchText)
+    }
 }

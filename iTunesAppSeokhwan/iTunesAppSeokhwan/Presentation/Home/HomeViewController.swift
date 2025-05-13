@@ -33,11 +33,6 @@ final class HomeViewController: UIViewController {
         configure()
         viewModel.action.accept(.viewDidLoad)
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        navigationItem.largeTitleDisplayMode = .always
-        navigationItem.title = "Music"
-    }
 }
 
 private extension HomeViewController {
