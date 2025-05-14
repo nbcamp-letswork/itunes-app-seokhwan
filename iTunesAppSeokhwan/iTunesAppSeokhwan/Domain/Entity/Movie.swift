@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Movie {
+struct Movie: SearchResult {
     let id: Int
     let title: String
     let filmDirector: String

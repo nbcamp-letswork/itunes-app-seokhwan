@@ -23,34 +23,20 @@ final class FetchMusicUseCase {
             repository.fetchMusic(for: "가을").asObservable(),
             repository.fetchMusic(for: "겨울").asObservable(),
         )
-        .map { [weak self] spring, summer, autumn, winter in
-            guard let self else { return [] }
-
+        .map { spring, summer, autumn, winter in
             let updatedSpring = spring.map {
                 var updated = $0
-                updated.albumImagePath = self.replaceImageSize(in: $0.albumImagePath, to: 600)
+                updated.albumImagePath = $0.albumImagePath.replaceImageSize(to: 600)
                 return updated
             }
 
             let updatedAutumn = autumn.map {
                 var updated = $0
-                updated.albumImagePath = self.replaceImageSize(in: $0.albumImagePath, to: 600)
+                updated.albumImagePath = $0.albumImagePath.replaceImageSize(to: 600)
                 return updated
             }
 
             return [updatedSpring, summer, updatedAutumn, winter]
         }
-    }
-
-    private func replaceImageSize(in path: String, to pixel: Int) -> String {
-        let pattern = #"\d+x\d+bb\.jpg$"#
-        let replacement = "\(pixel)x\(pixel)bb.jpg"
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return path }
-
-        return regex.stringByReplacingMatches(
-            in: path,
-            range: NSRange(path.startIndex..<path.endIndex, in: path),
-            withTemplate: replacement,
-        )
     }
 }

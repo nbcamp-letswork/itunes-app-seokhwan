@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Podcast {
+struct Podcast: SearchResult {
     let id: Int
     let title: String
     let creator: String
