@@ -9,19 +9,22 @@ import Foundation
 
 final class DIContainer {
     private let service: ITunesAPIService
-    private let repository: MusicRepository
+    private let musicRepository: MusicRepository
+    private let searchResultRepository: SearchResultRepository
 
     init() {
         service = ITunesAPIService()
-        repository = MusicRepository(service: service)
+        musicRepository = MusicRepository(service: service)
+        searchResultRepository = SearchResultRepository(service: service)
     }
 
     func makeHomeViewModel() -> HomeViewModel {
-        let useCase = FetchMusicUseCase(repository: repository)
+        let useCase = FetchMusicUseCase(repository: musicRepository)
         return HomeViewModel(useCase: useCase)
     }
 
     func makeSearchResultViewModel(searchText: String) -> SearchResultViewModel {
-        SearchResultViewModel(searchText: searchText)
+        let useCase = FetchSearchResultUseCase(repository: searchResultRepository)
+        return SearchResultViewModel(searchText: searchText, useCase: useCase)
     }
 }

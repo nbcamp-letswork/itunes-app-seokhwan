@@ -56,7 +56,7 @@ final class HomeViewModel {
                 }
             }
             .subscribe(onNext: { [weak self] music in
-                var newState = self?.state.value ?? State()
+                guard var newState = self?.state.value else { fatalError() }
                 newState.music = music
                 self?.state.accept(newState)
             })
