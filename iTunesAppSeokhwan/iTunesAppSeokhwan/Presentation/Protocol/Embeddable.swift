@@ -11,6 +11,7 @@ protocol Embeddable where Self: UIViewController {
     var containerView: UIView { get }
 
     func embed(with childViewController: UIViewController)
+    func clearSearchText()
 }
 
 extension Embeddable {

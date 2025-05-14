@@ -36,7 +36,10 @@ final class FlowCoordinator {
             childViewController = HomeViewController(viewModel: viewModel)
         case .searchResult(let searchText):
             let viewModel = diContainer.makeSearchResultViewModel(searchText: searchText)
-            childViewController = SearchResultViewController(viewModel: viewModel)
+            childViewController = SearchResultViewController(
+                viewModel: viewModel,
+                coordinator: self,
+            )
         }
 
         parent.embed(with: childViewController)

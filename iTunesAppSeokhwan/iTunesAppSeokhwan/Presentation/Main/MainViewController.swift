@@ -36,6 +36,11 @@ final class MainViewController: UIViewController, Embeddable {
         configure()
         coordinator?.switchTo(.home, in: self)
     }
+
+    func clearSearchText() {
+        searchController.searchBar.text = ""
+        searchController.isActive = false
+    }
 }
 
 private extension MainViewController {
@@ -79,7 +84,12 @@ private extension MainViewController {
         searchController.searchBar.rx.cancelButtonClicked
             .subscribe(onNext: { [weak self] in
                 guard let self else { return }
-                coordinator?.switchTo(.home, in: self)
+
+                if children.first is HomeViewController {
+                    clearSearchText()
+                } else {
+                    coordinator?.switchTo(.home, in: self)
+                }
             })
             .disposed(by: disposeBag)
     }

@@ -7,15 +7,21 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class SearchResultView: UIView {
     private var dataSource: DataSource?
+    private let disposeBag = DisposeBag()
+
+    let searchTextTap = PublishRelay<Void>()
 
     private let searchTextLabel: UILabel = {
         let label = UILabel()
         label.text = "SearchText"
         label.textColor = .black
         label.font = .boldSystemFont(ofSize: 24)
+        label.isUserInteractionEnabled = true
         return label
     }()
 
@@ -30,6 +36,8 @@ final class SearchResultView: UIView {
         tableView.estimatedRowHeight = 434
         return tableView
     }()
+
+    private let searchTextTapGestureRecognizer = UITapGestureRecognizer()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -55,9 +63,15 @@ final class SearchResultView: UIView {
 
 private extension SearchResultView {
     func configure() {
+        setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
         setDataSource()
+    }
+
+    func setAttributes() {
+        searchTextLabel.addGestureRecognizer(searchTextTapGestureRecognizer)
     }
 
     func setHierarchy() {
@@ -77,6 +91,15 @@ private extension SearchResultView {
             make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(16)
             make.bottom.equalTo(safeAreaLayoutGuide)
         }
+    }
+
+    func setBindings() {
+        searchTextTapGestureRecognizer.rx.event
+            .bind { [weak self] _ in
+                self?.searchTextTap.accept(())
+            }
+            .disposed(by: disposeBag)
+
     }
 
     func setDataSource() {
