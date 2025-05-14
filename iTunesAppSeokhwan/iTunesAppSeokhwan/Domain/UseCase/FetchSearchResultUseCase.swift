@@ -28,11 +28,9 @@ final class FetchSearchResultUseCase {
                 return updated
             }
 
-            let sorted: [SearchResult] = (updatedMovies + podcasts).sorted {
-                $0.releaseDate > $1.releaseDate
+            return zip(updatedMovies, podcasts).flatMap { movie, podcast in
+                [movie as SearchResult, podcast as SearchResult]
             }
-
-            return sorted
         }
     }
 }

@@ -56,9 +56,8 @@ private extension HomeView {
 
     func setConstraints() {
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
+            make.verticalEdges.equalTo(safeAreaLayoutGuide)
             make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
-            make.bottom.equalToSuperview()
         }
     }
 
