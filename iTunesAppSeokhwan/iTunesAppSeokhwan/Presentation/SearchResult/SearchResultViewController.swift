@@ -43,16 +43,14 @@ private extension SearchResultViewController {
     }
 
     func setBindings() {
-        viewModel.state
-            .compactMap(\.searchText)
+        viewModel.state.searchText
             .asDriver(onErrorJustReturn: "")
             .drive { [weak self] text in
                 self?.searchResultView.updateSearchText(with: text)
             }
             .disposed(by: disposeBag)
 
-        viewModel.state
-            .compactMap(\.items)
+        viewModel.state.items
             .asDriver(onErrorJustReturn: [])
             .drive { [weak self] items in
                 self?.searchResultView.updateItems(with: items)

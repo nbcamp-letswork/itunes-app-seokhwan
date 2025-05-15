@@ -41,8 +41,7 @@ private extension HomeViewController {
     }
 
     func setBindings() {
-        viewModel.state
-            .compactMap(\.music)
+        viewModel.state.items
             .asDriver(onErrorJustReturn: [])
             .drive { [weak self] music in
                 self?.homeView.updateMusic(with: music)

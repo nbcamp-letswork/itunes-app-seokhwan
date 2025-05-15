@@ -15,21 +15,19 @@ final class SearchResultViewModel {
     }
 
     struct State {
-        let searchText: String
-        var items = [SearchResultView.SearchResultItem]()
+        let searchText = BehaviorRelay<String>(value: "")
+        let items = BehaviorRelay<[SearchResultView.SearchResultItem]>(value: [])
     }
 
-    private let useCase: SearchResultUseCase
+    let action = PublishRelay<Action>()
+    let state = State()
 
-    private let searchResults = BehaviorRelay<[MediaItem]>(value: [])
+    private let useCase: SearchResultUseCase
     private let disposeBag = DisposeBag()
 
-    let action = PublishRelay<Action>()
-    let state: BehaviorRelay<State>
-
     init(searchText: String, useCase: SearchResultUseCase) {
+        state.searchText.accept(searchText)
         self.useCase = useCase
-        state = .init(value: State(searchText: searchText))
         setBindings()
     }
 
@@ -42,10 +40,15 @@ final class SearchResultViewModel {
                 }
             })
             .disposed(by: disposeBag)
+    }
 
-        searchResults
-            .map {
-                $0.map {
+    private func fetchSearchResults() {
+        Task {
+            let result = await useCase.fetchSearchResult(for: state.searchText.value)
+
+            switch result {
+            case .success(let searchResults):
+                let items = searchResults.map {
                     SearchResultView.SearchResultItem(
                         id: $0.id,
                         mediaType: $0.mediaType == .movie ? .movie : .podcast,
@@ -54,21 +57,9 @@ final class SearchResultViewModel {
                         imagePath: $0.artworkBasePath + "600x600bb.jpg",
                     )
                 }
-            }
-            .subscribe(onNext: { [weak self] items in
-                guard var newState = self?.state.value else { fatalError() }
-                newState.items = items
-                self?.state.accept(newState)
-            })
-            .disposed(by: disposeBag)
-    }
-
-    private func fetchSearchResults() {
-        Task {
-            let result = await useCase.fetchSearchResult(for: state.value.searchText)
-
-            if case let .success(items) = result {
-                self.searchResults.accept(items)
+                state.items.accept(items)
+            case .failure(let error):
+                break // TODO: errorMessage 구현
             }
         }
     }

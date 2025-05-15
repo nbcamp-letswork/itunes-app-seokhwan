@@ -15,16 +15,14 @@ final class HomeViewModel {
     }
 
     struct State {
-        var music = [[HomeView.HomeItem]]()
+        let items = BehaviorRelay<[[HomeView.HomeItem]]>(value: [])
     }
 
-    private let useCase: MusicUseCase
-
-    private let music = BehaviorRelay<[[MediaItem]]>(value: [])
-    private let disposeBag = DisposeBag()
-
     let action = PublishRelay<Action>()
-    let state = BehaviorRelay<State>(value: State())
+    let state = State()
+
+    private let useCase: MusicUseCase
+    private let disposeBag = DisposeBag()
 
     init(useCase: MusicUseCase) {
         self.useCase = useCase
@@ -40,10 +38,15 @@ final class HomeViewModel {
                 }
             })
             .disposed(by: disposeBag)
+    }
 
-        music
-            .map {
-                $0.enumerated().map { (index, element) in
+    private func fetchMusic() {
+        Task {
+            let result = await useCase.fetchMusic()
+
+            switch result {
+            case .success(let music):
+                let items = music.enumerated().map { (index, element) in
                     element.map {
                         HomeView.HomeItem(
                             id: $0.id,
@@ -54,21 +57,9 @@ final class HomeViewModel {
                         )
                     }
                 }
-            }
-            .subscribe(onNext: { [weak self] music in
-                guard var newState = self?.state.value else { fatalError() }
-                newState.music = music
-                self?.state.accept(newState)
-            })
-            .disposed(by: disposeBag)
-    }
-
-    private func fetchMusic() {
-        Task {
-            let result = await useCase.fetchMusic()
-
-            if case let .success(music) = result {
-                self.music.accept(music)
+                state.items.accept(items)
+            case .failure(let error):
+                break // TODO: errorMessage 구현
             }
         }
     }
