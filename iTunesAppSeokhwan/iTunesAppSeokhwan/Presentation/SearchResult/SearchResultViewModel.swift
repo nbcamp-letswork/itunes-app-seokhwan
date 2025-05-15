@@ -19,15 +19,15 @@ final class SearchResultViewModel {
         var items = [SearchResultView.SearchResultItem]()
     }
 
-    private let useCase: FetchSearchResultUseCase
+    private let useCase: SearchResultUseCase
 
-    private let searchResults = BehaviorRelay<[SearchResult]>(value: [])
+    private let searchResults = BehaviorRelay<[MediaItem]>(value: [])
     private let disposeBag = DisposeBag()
 
     let action = PublishRelay<Action>()
     let state: BehaviorRelay<State>
 
-    init(searchText: String, useCase: FetchSearchResultUseCase) {
+    init(searchText: String, useCase: SearchResultUseCase) {
         self.useCase = useCase
         state = .init(value: State(searchText: searchText))
         setBindings()
@@ -45,26 +45,14 @@ final class SearchResultViewModel {
 
         searchResults
             .map {
-                $0.map { item in
-                    if let movie = item as? Movie {
-                        SearchResultView.SearchResultItem(
-                            id: movie.id,
-                            mediaType: .movie,
-                            title: movie.title,
-                            author: movie.filmDirector,
-                            imagePath: movie.posterImagePath,
-                        )
-                    } else if let podcast = item as? Podcast {
-                        SearchResultView.SearchResultItem(
-                            id: podcast.id,
-                            mediaType: .podcast,
-                            title: podcast.title,
-                            author: podcast.creator,
-                            imagePath: podcast.posterImagePath,
-                        )
-                    } else {
-                        fatalError()
-                    }
+                $0.map {
+                    SearchResultView.SearchResultItem(
+                        id: $0.id,
+                        mediaType: $0.mediaType == .movie ? .movie : .podcast,
+                        title: $0.title,
+                        author: $0.artist,
+                        imagePath: $0.artworkBasePath + "600x600bb.jpg",
+                    )
                 }
             }
             .subscribe(onNext: { [weak self] items in
@@ -76,10 +64,12 @@ final class SearchResultViewModel {
     }
 
     private func fetchSearchResults() {
-        useCase.fetchSearchResult(for: state.value.searchText)
-            .subscribe(onNext: { [weak self] items in
-                self?.searchResults.accept(items)
-            })
-            .disposed(by: disposeBag)
+        Task {
+            let result = await useCase.fetchSearchResult(for: state.value.searchText)
+
+            if case let .success(items) = result {
+                self.searchResults.accept(items)
+            }
+        }
     }
 }

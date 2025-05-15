@@ -18,15 +18,15 @@ final class HomeViewModel {
         var music = [[HomeView.HomeItem]]()
     }
 
-    private let useCase: FetchMusicUseCase
+    private let useCase: MusicUseCase
 
-    private let music = BehaviorRelay<[[Music]]>(value: [])
+    private let music = BehaviorRelay<[[MediaItem]]>(value: [])
     private let disposeBag = DisposeBag()
 
     let action = PublishRelay<Action>()
     let state = BehaviorRelay<State>(value: State())
 
-    init(useCase: FetchMusicUseCase) {
+    init(useCase: MusicUseCase) {
         self.useCase = useCase
         setBindings()
     }
@@ -50,7 +50,7 @@ final class HomeViewModel {
                             section: HomeView.HomeSection(sectionIndex: index),
                             title: $0.title,
                             artist: $0.artist,
-                            albumImagePath: $0.albumImagePath,
+                            albumImagePath: $0.artworkBasePath + "600x600bb.jpg",
                         )
                     }
                 }
@@ -64,10 +64,12 @@ final class HomeViewModel {
     }
 
     private func fetchMusic() {
-        useCase.fetchMusic()
-            .subscribe(onNext: { [weak self] music in
-                self?.music.accept(music)
-            })
-            .disposed(by: disposeBag)
+        Task {
+            let result = await useCase.fetchMusic()
+
+            if case let .success(music) = result {
+                self.music.accept(music)
+            }
+        }
     }
 }
