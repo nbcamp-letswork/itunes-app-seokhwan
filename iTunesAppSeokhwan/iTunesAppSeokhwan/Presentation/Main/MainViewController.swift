@@ -66,7 +66,7 @@ private extension MainViewController {
 
     func setConstraints() {
         containerView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
+            make.edges.equalToSuperview()
         }
     }
 
