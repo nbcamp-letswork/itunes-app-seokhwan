@@ -10,15 +10,6 @@ import RxSwift
 import RxRelay
 
 final class HomeViewModel {
-    enum Action {
-        case viewDidLoad
-    }
-
-    struct State {
-        let items = BehaviorRelay<[[HomeView.HomeItem]]>(value: [])
-        let errorMessage = PublishRelay<String>()
-    }
-
     let action = PublishRelay<Action>()
     let state = State()
 
@@ -49,9 +40,9 @@ final class HomeViewModel {
             case .success(let music):
                 let items = music.enumerated().map { (index, element) in
                     element.map {
-                        HomeView.HomeItem(
+                        Item(
                             id: $0.id,
-                            section: HomeView.HomeSection(sectionIndex: index),
+                            sectionIndex: index,
                             title: $0.title,
                             artist: $0.artist,
                             albumImagePath: $0.artworkBasePath + "600x600bb.jpg",
@@ -62,6 +53,34 @@ final class HomeViewModel {
             case .failure(let error):
                 state.errorMessage.accept(error.localizedDescription)
             }
+        }
+    }
+}
+
+extension HomeViewModel {
+    enum Action {
+        case viewDidLoad
+    }
+
+    struct State {
+        let items = BehaviorRelay<[[Item]]>(value: [])
+        let errorMessage = PublishRelay<String>()
+    }
+
+    struct Item: Hashable {
+        let id: Int
+        let sectionIndex: Int
+        let title: String
+        let artist: String
+        let albumImagePath: String
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.id == rhs.id && lhs.sectionIndex == rhs.sectionIndex
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+            hasher.combine(sectionIndex)
         }
     }
 }

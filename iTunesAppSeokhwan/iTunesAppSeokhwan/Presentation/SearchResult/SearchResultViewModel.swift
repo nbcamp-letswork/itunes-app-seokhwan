@@ -10,16 +10,6 @@ import RxSwift
 import RxRelay
 
 final class SearchResultViewModel {
-    enum Action {
-        case viewDidLoad
-    }
-
-    struct State {
-        let searchText = BehaviorRelay<String>(value: "")
-        let items = BehaviorRelay<[SearchResultView.SearchResultItem]>(value: [])
-        let errorMessage = PublishRelay<String>()
-    }
-
     let action = PublishRelay<Action>()
     let state = State()
 
@@ -50,7 +40,7 @@ final class SearchResultViewModel {
             switch result {
             case .success(let searchResults):
                 let items = searchResults.map {
-                    SearchResultView.SearchResultItem(
+                    Item(
                         id: $0.id,
                         mediaType: $0.mediaType == .movie ? .movie : .podcast,
                         title: $0.title,
@@ -62,6 +52,40 @@ final class SearchResultViewModel {
             case .failure(let error):
                 state.errorMessage.accept(error.localizedDescription)
             }
+        }
+    }
+}
+
+extension SearchResultViewModel {
+    enum Action {
+        case viewDidLoad
+    }
+
+    struct State {
+        let searchText = BehaviorRelay<String>(value: "")
+        let items = BehaviorRelay<[Item]>(value: [])
+        let errorMessage = PublishRelay<String>()
+    }
+
+    struct Item: Hashable {
+        enum MediaType {
+            case movie
+            case podcast
+        }
+
+        let id: Int
+        let mediaType: MediaType
+        let title: String
+        let author: String
+        let imagePath: String
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.id == rhs.id && lhs.mediaType == rhs.mediaType
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+            hasher.combine(mediaType)
         }
     }
 }

@@ -40,7 +40,7 @@ final class MusicHeader: UICollectionReusableView {
         fatalError()
     }
 
-    func update(with section: HomeView.HomeSection) {
+    func update(with section: HomeView.Section) {
         titleLabel.text = section.title
         subtitleLabel.text = section.subtitle
     }

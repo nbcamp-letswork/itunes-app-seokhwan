@@ -43,8 +43,8 @@ final class SearchResultCell: UITableViewCell {
         fatalError()
     }
 
-    func update(with item: SearchResultView.SearchResultItem) {
-        containerView.backgroundColor = item.mediaType.cellBackgroundColor
+    func update(with item: SearchResultViewModel.Item) {
+        containerView.backgroundColor = item.mediaType == .movie ? .movieBackground : .podcastBackground
         authorLabel.text = item.author
         titleLabel.text = item.title
         posterImageView.setImage(from: item.imagePath)

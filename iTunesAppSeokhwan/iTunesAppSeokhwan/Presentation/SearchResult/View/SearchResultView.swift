@@ -52,7 +52,7 @@ final class SearchResultView: UIView {
         searchTextLabel.text = text
     }
 
-    func updateItems(with items: [SearchResultItem]) {
+    func updateItems(with items: [SearchResultViewModel.Item]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(items)

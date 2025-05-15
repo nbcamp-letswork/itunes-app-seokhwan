@@ -8,43 +8,12 @@
 import UIKit
 
 extension SearchResultView {
-    typealias DataSource = UITableViewDiffableDataSource<SearchResultSection, SearchResultItem>
+    typealias DataSource = UITableViewDiffableDataSource<Section, SearchResultViewModel.Item>
     typealias CellProvider = DataSource.CellProvider
-    typealias Snapshot = NSDiffableDataSourceSnapshot<SearchResultSection, SearchResultItem>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, SearchResultViewModel.Item>
 
-    enum MediaType: Hashable {
-        case movie
-        case podcast
-
-        var cellBackgroundColor: UIColor {
-            switch self {
-            case .movie:
-                return .movieBackground
-            case .podcast:
-                return .podcastBackground
-            }
-        }
-    }
-
-    enum SearchResultSection: Hashable {
+    enum Section: Hashable {
         case main
-    }
-
-    struct SearchResultItem: Hashable {
-        let id: Int
-        let mediaType: MediaType
-        let title: String
-        let author: String
-        let imagePath: String
-
-        static func == (lhs: SearchResultItem, rhs: SearchResultItem) -> Bool {
-            lhs.id == rhs.id && lhs.mediaType == rhs.mediaType
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-            hasher.combine(mediaType)
-        }
     }
 
     var cellProvider: CellProvider {
