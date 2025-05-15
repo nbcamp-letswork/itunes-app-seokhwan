@@ -16,6 +16,7 @@ final class HomeViewModel {
 
     struct State {
         let items = BehaviorRelay<[[HomeView.HomeItem]]>(value: [])
+        let errorMessage = PublishRelay<String>()
     }
 
     let action = PublishRelay<Action>()
@@ -59,7 +60,7 @@ final class HomeViewModel {
                 }
                 state.items.accept(items)
             case .failure(let error):
-                break // TODO: errorMessage 구현
+                state.errorMessage.accept(error.localizedDescription)
             }
         }
     }

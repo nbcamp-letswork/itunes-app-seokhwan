@@ -17,6 +17,7 @@ final class SearchResultViewModel {
     struct State {
         let searchText = BehaviorRelay<String>(value: "")
         let items = BehaviorRelay<[SearchResultView.SearchResultItem]>(value: [])
+        let errorMessage = PublishRelay<String>()
     }
 
     let action = PublishRelay<Action>()
@@ -59,7 +60,7 @@ final class SearchResultViewModel {
                 }
                 state.items.accept(items)
             case .failure(let error):
-                break // TODO: errorMessage 구현
+                state.errorMessage.accept(error.localizedDescription)
             }
         }
     }

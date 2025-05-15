@@ -57,6 +57,13 @@ private extension SearchResultViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.state.errorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive { [weak self] message in
+                self?.presentErrorAlert(with: message)
+            }
+            .disposed(by: disposeBag)
+
         searchResultView.searchTextTap
             .asDriver(onErrorJustReturn: ())
             .drive { [weak self] _ in
