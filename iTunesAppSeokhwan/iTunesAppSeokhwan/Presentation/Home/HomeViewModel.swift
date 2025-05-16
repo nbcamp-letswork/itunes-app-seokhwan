@@ -10,23 +10,13 @@ import RxSwift
 import RxRelay
 
 final class HomeViewModel {
-    enum Action {
-        case viewDidLoad
-    }
+    let action = PublishRelay<Action>()
+    let state = State()
 
-    struct State {
-        var music = [[HomeView.HomeItem]]()
-    }
-
-    private let useCase: FetchMusicUseCase
-
-    private let music = BehaviorRelay<[[Music]]>(value: [])
+    private let useCase: MusicUseCase
     private let disposeBag = DisposeBag()
 
-    let action = PublishRelay<Action>()
-    let state = BehaviorRelay<State>(value: State())
-
-    init(useCase: FetchMusicUseCase) {
+    init(useCase: MusicUseCase) {
         self.useCase = useCase
         setBindings()
     }
@@ -40,34 +30,57 @@ final class HomeViewModel {
                 }
             })
             .disposed(by: disposeBag)
-
-        music
-            .map {
-                $0.enumerated().map { (index, element) in
-                    element.map {
-                        HomeView.HomeItem(
-                            id: $0.id,
-                            section: HomeView.HomeSection(sectionIndex: index),
-                            title: $0.title,
-                            artist: $0.artist,
-                            albumImagePath: $0.albumImagePath,
-                        )
-                    }
-                }
-            }
-            .subscribe(onNext: { [weak self] music in
-                var newState = self?.state.value ?? State()
-                newState.music = music
-                self?.state.accept(newState)
-            })
-            .disposed(by: disposeBag)
     }
 
     private func fetchMusic() {
-        useCase.fetchMusic()
-            .subscribe(onNext: { [weak self] music in
-                self?.music.accept(music)
-            })
-            .disposed(by: disposeBag)
+        Task {
+            let result = await useCase.fetchMusic()
+
+            switch result {
+            case .success(let music):
+                let items = music.enumerated().map { (index, element) in
+                    element.map {
+                        Item(
+                            id: $0.id,
+                            sectionIndex: index,
+                            title: $0.title,
+                            artist: $0.artist,
+                            albumImagePath: $0.artworkBasePath + "600x600bb.jpg",
+                        )
+                    }
+                }
+                state.items.accept(items)
+            case .failure(let error):
+                state.errorMessage.accept(error.localizedDescription)
+            }
+        }
+    }
+}
+
+extension HomeViewModel {
+    enum Action {
+        case viewDidLoad
+    }
+
+    struct State {
+        let items = BehaviorRelay<[[Item]]>(value: [])
+        let errorMessage = PublishRelay<String>()
+    }
+
+    struct Item: Hashable {
+        let id: Int
+        let sectionIndex: Int
+        let title: String
+        let artist: String
+        let albumImagePath: String
+
+        static func == (lhs: Item, rhs: Item) -> Bool {
+            lhs.id == rhs.id && lhs.sectionIndex == rhs.sectionIndex
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+            hasher.combine(sectionIndex)
+        }
     }
 }

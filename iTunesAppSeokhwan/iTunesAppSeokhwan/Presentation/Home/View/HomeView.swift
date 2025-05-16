@@ -7,16 +7,12 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class HomeView: UIView {
     private var dataSource: DataSource?
-
-    private let searchBar: UISearchBar = {
-        let searchBar = UISearchBar()
-        searchBar.searchBarStyle = .minimal
-        searchBar.placeholder = "영화, 팟캐스트 검색"
-        return searchBar
-    }()
+    private let disposeBag = DisposeBag()
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -37,9 +33,9 @@ final class HomeView: UIView {
         fatalError()
     }
 
-    func updateMusic(with music: [[HomeItem]]) {
+    func updateMusic(with music: [[HomeViewModel.Item]]) {
         var snapshot = Snapshot()
-        let sections: [HomeSection] = [.spring, .summer, .autumn, .winter]
+        let sections: [Section] = [.spring, .summer, .autumn, .winter]
 
         snapshot.appendSections(sections)
         zip(music, sections).forEach { music, section in
@@ -52,33 +48,29 @@ final class HomeView: UIView {
 
 private extension HomeView {
     func configure() {
-        setAttributes()
         setHierarchy()
         setConstraints()
         setDataSource()
-    }
-
-    func setAttributes() {
-        backgroundColor = .background
+        setBindings()
     }
 
     func setHierarchy() {
-        [searchBar, collectionView].forEach {
-            addSubview($0)
-        }
+        addSubview(collectionView)
     }
 
     func setConstraints() {
-        searchBar.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
-            make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
-        }
-
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(12)
-            make.directionalHorizontalEdges.equalTo(safeAreaLayoutGuide).inset(12)
-            make.bottom.equalToSuperview()
+            make.verticalEdges.equalToSuperview()
+            make.directionalHorizontalEdges.equalToSuperview().inset(12)
         }
+    }
+
+    func setBindings() {
+        collectionView.rx.willBeginDragging
+            .bind { [weak self] in
+                self?.window?.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 
     func setDataSource() {

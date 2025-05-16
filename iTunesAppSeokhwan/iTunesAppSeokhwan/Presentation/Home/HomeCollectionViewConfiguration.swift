@@ -8,12 +8,12 @@
 import UIKit
 
 extension HomeView {
-    typealias DataSource = UICollectionViewDiffableDataSource<HomeSection, HomeItem>
+    typealias DataSource = UICollectionViewDiffableDataSource<Section, HomeViewModel.Item>
     typealias CellProvider = DataSource.CellProvider
     typealias HeaderProvider = DataSource.SupplementaryViewProvider
-    typealias Snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, HomeViewModel.Item>
 
-    enum HomeSection: Hashable {
+    enum Section: Hashable {
         case spring
         case summer
         case autumn
@@ -141,32 +141,15 @@ extension HomeView {
         }
     }
 
-    struct HomeItem: Hashable {
-        let id: Int
-        let section: HomeSection
-        let title: String
-        let artist: String
-        let albumImagePath: String
-
-        static func == (lhs: HomeItem, rhs: HomeItem) -> Bool {
-            lhs.id == rhs.id && lhs.section == rhs.section
-        }
-
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-            hasher.combine(section)
-        }
-    }
-
     var compositionalLayout: UICollectionViewCompositionalLayout {
         .init { index, _ -> NSCollectionLayoutSection in
-            HomeSection(sectionIndex: index).section
+            Section(sectionIndex: index).section
         }
     }
 
     var cellProvider: CellProvider {
         { collectionView, indexPath, item in
-            let section = HomeSection(sectionIndex: indexPath.section)
+            let section = Section(sectionIndex: indexPath.section)
 
             switch section {
             case .spring, .autumn:
@@ -195,7 +178,7 @@ extension HomeView {
                     withReuseIdentifier: MusicHeader.identifier,
                     for: indexPath,
                   ) as? MusicHeader else { fatalError() }
-            let section = HomeSection(sectionIndex: indexPath.section)
+            let section = Section(sectionIndex: indexPath.section)
             header.update(with: section)
 
             return header

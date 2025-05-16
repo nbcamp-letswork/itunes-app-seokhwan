@@ -33,11 +33,6 @@ final class HomeViewController: UIViewController {
         configure()
         viewModel.action.accept(.viewDidLoad)
     }
-
-    override func viewWillAppear(_ animated: Bool) {
-        navigationItem.largeTitleDisplayMode = .always
-        navigationItem.title = "Music"
-    }
 }
 
 private extension HomeViewController {
@@ -46,11 +41,17 @@ private extension HomeViewController {
     }
 
     func setBindings() {
-        viewModel.state
-            .compactMap(\.music)
+        viewModel.state.items
             .asDriver(onErrorJustReturn: [])
             .drive { [weak self] music in
                 self?.homeView.updateMusic(with: music)
+            }
+            .disposed(by: disposeBag)
+
+        viewModel.state.errorMessage
+            .asDriver(onErrorJustReturn: "")
+            .drive { [weak self] message in
+                self?.presentErrorAlert(with: message)
             }
             .disposed(by: disposeBag)
     }

@@ -48,7 +48,7 @@ final class MusicListCell: UICollectionViewCell {
         fatalError()
     }
 
-    func update(with item: HomeView.HomeItem) {
+    func update(with item: HomeViewModel.Item) {
         albumImageView.setImage(from: item.albumImagePath)
         titleLabel.text = item.title
         artistLabel.text = item.artist

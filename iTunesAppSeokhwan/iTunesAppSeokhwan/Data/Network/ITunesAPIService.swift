@@ -8,10 +8,56 @@
 import Foundation
 
 final class ITunesAPIService {
+    enum MediaType {
+        case music
+        case movie
+        case podcast
+
+        var urlParameters: String {
+            "?media=\(media)&entity=\(entity)&limit=\(limit)"
+        }
+
+        private var media: String {
+            switch self {
+            case .music:
+                return "music"
+            case .movie:
+                return "movie"
+            case .podcast:
+                return "podcast"
+            }
+        }
+
+        private var entity: String {
+            switch self {
+            case .music:
+                return "song"
+            case .movie:
+                return "movie"
+            case .podcast:
+                return "podcast"
+            }
+        }
+
+        private var limit: Int {
+            switch self {
+            case .music:
+                return 12
+            case .movie:
+                return 5
+            case .podcast:
+                return 5
+            }
+        }
+    }
+
     private let basePath = "https://itunes.apple.com/search"
 
-    func fetchMusic(for term: String) async -> Result<[MusicResponse], NetworkError> {
-        let urlString = basePath + "?media=music&term=\(term)&entity=song"
+    func fetchContents(
+        for term: String,
+        of mediaType: MediaType,
+    ) async -> Result<[ContentDTO], NetworkError> {
+        let urlString = basePath + mediaType.urlParameters + "&term=\(term)"
         guard let url = URL(string: urlString) else {
             return .failure(.invalidURL)
         }
@@ -25,7 +71,7 @@ final class ITunesAPIService {
             return .failure(.requestFailed(statusCode: httpResponse.statusCode))
         }
 
-        guard let resultsResponse = try? JSONDecoder().decode(MusicResultsResponse.self, from: data) else {
+        guard let resultsResponse = try? JSONDecoder().decode(ContentsDTO.self, from: data) else {
             return .failure(.decodingFailed)
         }
 
