@@ -14,7 +14,7 @@ final class SearchResultView: UIView {
     private var dataSource: DataSource?
     private let disposeBag = DisposeBag()
 
-    let searchTextTap = PublishRelay<Void>()
+    let didTapSearchText = PublishRelay<Void>()
 
     private let searchTextLabel: UILabel = {
         let label = UILabel()
@@ -96,10 +96,15 @@ private extension SearchResultView {
     func setBindings() {
         searchTextTapGestureRecognizer.rx.event
             .bind { [weak self] _ in
-                self?.searchTextTap.accept(())
+                self?.didTapSearchText.accept(())
             }
             .disposed(by: disposeBag)
 
+        tableView.rx.willBeginDragging
+            .bind { [weak self] in
+                self?.window?.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 
     func setDataSource() {

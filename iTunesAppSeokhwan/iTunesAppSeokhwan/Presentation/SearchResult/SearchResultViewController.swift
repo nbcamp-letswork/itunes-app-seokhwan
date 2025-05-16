@@ -64,7 +64,7 @@ private extension SearchResultViewController {
             }
             .disposed(by: disposeBag)
 
-        searchResultView.searchTextTap
+        searchResultView.didTapSearchText
             .asDriver(onErrorJustReturn: ())
             .drive { [weak self] _ in
                 guard let self,

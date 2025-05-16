@@ -7,9 +7,12 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class HomeView: UIView {
     private var dataSource: DataSource?
+    private let disposeBag = DisposeBag()
 
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
@@ -48,6 +51,7 @@ private extension HomeView {
         setHierarchy()
         setConstraints()
         setDataSource()
+        setBindings()
     }
 
     func setHierarchy() {
@@ -59,6 +63,14 @@ private extension HomeView {
             make.verticalEdges.equalToSuperview()
             make.directionalHorizontalEdges.equalToSuperview().inset(12)
         }
+    }
+
+    func setBindings() {
+        collectionView.rx.willBeginDragging
+            .bind { [weak self] in
+                self?.window?.endEditing(true)
+            }
+            .disposed(by: disposeBag)
     }
 
     func setDataSource() {
