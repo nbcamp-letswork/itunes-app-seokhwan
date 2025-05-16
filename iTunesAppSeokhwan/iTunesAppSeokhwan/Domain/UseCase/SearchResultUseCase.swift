@@ -29,6 +29,13 @@ final class SearchResultUseCase {
             return .failure(error)
         }
 
-        return .success(results.compactMap { try? $0.get() }.flatMap { $0 })
+        /*
+         shuffle은 UI 표현을 위해 임시로 사용
+         이후 인기순 혹은 관련성순으로 정렬할 수 있으면 대체
+         */
+        let mediaItems = results.compactMap { try? $0.get() }.flatMap { $0 }
+        let shuffled = mediaItems.shuffled()
+
+        return .success(shuffled)
     }
 }
