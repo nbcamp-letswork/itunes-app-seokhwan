@@ -33,6 +33,11 @@ final class DetailViewController: UIViewController {
         configure()
         viewModel.action.accept(.viewDidLoad)
     }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.largeTitleDisplayMode = .never
+    }
 }
 
 private extension DetailViewController {
@@ -41,6 +46,11 @@ private extension DetailViewController {
     }
 
     func setBindings() {
-
+        viewModel.state.item
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] item in
+                self?.detailView.update(with: item)
+            }
+            .disposed(by: disposeBag)
     }
 }
