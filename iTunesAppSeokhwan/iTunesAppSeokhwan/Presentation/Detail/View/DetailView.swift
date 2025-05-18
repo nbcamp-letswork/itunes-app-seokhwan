@@ -7,8 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class DetailView: UIView {
+    private let disposeBag = DisposeBag()
+
+    let didTapCloseButton = PublishRelay<Void>()
+
     private let scrollView = UIScrollView()
 
     private let stackView: UIStackView = {
@@ -37,6 +43,16 @@ final class DetailView: UIView {
     private let runningTimeContentView = DetailContentView()
 
     private let descriptionContentView = DetailContentView()
+
+    private let closeButton: UIButton = {
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "xmark.circle.fill")
+        config.baseForegroundColor = .systemGray
+        let button = UIButton(configuration: config)
+        button.layer.cornerRadius = 22
+        button.clipsToBounds = true
+        return button
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -71,6 +87,7 @@ private extension DetailView {
         setAttributes()
         setHierarchy()
         setConstraints()
+        setBindings()
     }
 
     func setAttributes() {
@@ -91,7 +108,9 @@ private extension DetailView {
             stackView.addArrangedSubview($0)
         }
         scrollView.addSubview(stackView)
-        addSubview(scrollView)
+        [scrollView, closeButton].forEach {
+            addSubview($0)
+        }
     }
 
     func setConstraints() {
@@ -107,5 +126,18 @@ private extension DetailView {
             make.width.equalToSuperview()
             make.height.equalTo(imageView.snp.width)
         }
+
+        closeButton.snp.makeConstraints { make in
+            make.top.trailing.equalTo(safeAreaLayoutGuide).inset(16)
+            make.size.equalTo(44)
+        }
+    }
+
+    func setBindings() {
+        closeButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.didTapCloseButton.accept(())
+            })
+            .disposed(by: disposeBag)
     }
 }

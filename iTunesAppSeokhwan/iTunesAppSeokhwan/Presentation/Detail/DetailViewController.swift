@@ -52,5 +52,12 @@ private extension DetailViewController {
                 self?.detailView.update(with: item)
             }
             .disposed(by: disposeBag)
+
+        detailView.didTapCloseButton
+            .asDriver(onErrorJustReturn: ())
+            .drive { [weak self] _ in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
