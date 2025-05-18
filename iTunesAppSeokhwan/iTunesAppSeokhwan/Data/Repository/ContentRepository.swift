@@ -25,7 +25,7 @@ final class ContentRepository {
         case .success(let dto):
             return .success(makeMediaItems(from: dto, of: mediaType))
         case .failure(let error):
-            return .failure(DomainError.networkError(error.localizedDescription))
+            return .failure(.networkError(error.localizedDescription))
         }
     }
 

@@ -14,6 +14,7 @@ final class SearchResultViewModel {
     let state = State()
 
     private let useCase: SearchResultUseCase
+    private var searchResults = [MediaItem]()
     private let disposeBag = DisposeBag()
 
     init(searchText: String, useCase: SearchResultUseCase) {
@@ -25,9 +26,12 @@ final class SearchResultViewModel {
     private func setBindings() {
         action
             .subscribe(onNext: { [weak self] action in
+                guard let self else { return }
                 switch action {
                 case .viewDidLoad:
-                    self?.fetchSearchResults()
+                    fetchSearchResults()
+                case .didTapCell(let index):
+                    state.pushToDetail.accept(searchResults[index])
                 }
             })
             .disposed(by: disposeBag)
@@ -39,6 +43,7 @@ final class SearchResultViewModel {
 
             switch result {
             case .success(let searchResults):
+                self.searchResults = searchResults
                 let items = searchResults.map {
                     Item(
                         id: $0.id,
@@ -59,11 +64,13 @@ final class SearchResultViewModel {
 extension SearchResultViewModel {
     enum Action {
         case viewDidLoad
+        case didTapCell(Int)
     }
 
     struct State {
         let searchText = BehaviorRelay<String>(value: "")
         let items = BehaviorRelay<[Item]>(value: [])
+        let pushToDetail = PublishRelay<MediaItem>()
         let errorMessage = PublishRelay<String>()
     }
 

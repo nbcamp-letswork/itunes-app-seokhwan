@@ -14,6 +14,8 @@ final class HomeView: UIView {
     private var dataSource: DataSource?
     private let disposeBag = DisposeBag()
 
+    let didTapCell = PublishRelay<IndexPath>()
+
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(
             frame: .zero,
@@ -69,6 +71,12 @@ private extension HomeView {
         collectionView.rx.willBeginDragging
             .bind { [weak self] in
                 self?.window?.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+
+        collectionView.rx.itemSelected
+            .bind { [weak self] indexPath in
+                self?.didTapCell.accept(indexPath)
             }
             .disposed(by: disposeBag)
     }

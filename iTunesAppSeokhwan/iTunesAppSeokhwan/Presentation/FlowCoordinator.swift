@@ -14,6 +14,7 @@ final class FlowCoordinator {
     }
 
     private let diContainer: DIContainer
+    private var navigationController: UINavigationController?
 
     init(diContainer: DIContainer) {
         self.diContainer = diContainer
@@ -23,6 +24,7 @@ final class FlowCoordinator {
         let viewController = MainViewController(coordinator: self)
         let navigationController = UINavigationController(rootViewController: viewController)
         navigationController.navigationBar.prefersLargeTitles = true
+        self.navigationController = navigationController
 
         completion(navigationController)
     }
@@ -33,7 +35,10 @@ final class FlowCoordinator {
         switch viewType {
         case .home:
             let viewModel = diContainer.makeHomeViewModel()
-            childViewController = HomeViewController(viewModel: viewModel)
+            childViewController = HomeViewController(
+                viewModel: viewModel,
+                coordinator: self,
+            )
         case .searchResult(let searchText):
             let viewModel = diContainer.makeSearchResultViewModel(searchText: searchText)
             childViewController = SearchResultViewController(
@@ -43,5 +48,12 @@ final class FlowCoordinator {
         }
 
         parent.embed(with: childViewController)
+    }
+
+    func pushToDetail(with mediaItem: MediaItem) {
+        let viewModel = diContainer.makeDetailViewModel(mediaItem: mediaItem)
+        let viewController = DetailViewController(viewModel: viewModel)
+
+        navigationController?.pushViewController(viewController, animated: true)
     }
 }

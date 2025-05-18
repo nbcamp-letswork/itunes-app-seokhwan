@@ -25,4 +25,8 @@ final class DIContainer {
         let useCase = SearchResultUseCase(repository: repository)
         return SearchResultViewModel(searchText: searchText, useCase: useCase)
     }
+
+    func makeDetailViewModel(mediaItem: MediaItem) -> DetailViewModel {
+        DetailViewModel(mediaItem: mediaItem)
+    }
 }
