@@ -40,12 +40,14 @@ final class HomeViewModel {
             case .success(let music):
                 let items = music.enumerated().map { (index, element) in
                     element.map {
-                        Item(
+                        // spring, autumn 섹션은 고해상도 이미지 사용
+                        let imageFileName = index % 2 == 0 ? "600x600bb.jpg" : "200x200bb.jpg"
+                        return Item(
                             id: $0.id,
                             sectionIndex: index,
                             title: $0.title,
                             artist: $0.artist,
-                            albumImagePath: $0.artworkBasePath + "600x600bb.jpg",
+                            albumImagePath: $0.artworkBasePath + imageFileName,
                         )
                     }
                 }
