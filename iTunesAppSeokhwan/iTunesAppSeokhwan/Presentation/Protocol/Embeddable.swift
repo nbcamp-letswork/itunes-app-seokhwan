@@ -15,31 +15,34 @@ protocol Embeddable where Self: UIViewController {
 }
 
 extension Embeddable {
-    @MainActor
     func embed(with childViewController: UIViewController) {
-        children.forEach {
-            $0.willMove(toParent: nil)
-            $0.view.removeFromSuperview()
-            $0.removeFromParent()
-        }
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
 
-        addChild(childViewController)
+            children.forEach {
+                $0.willMove(toParent: nil)
+                $0.view.removeFromSuperview()
+                $0.removeFromParent()
+            }
 
-        UIView.transition(
-            with: containerView,
-            duration: 0.3,
-            options: .transitionCrossDissolve,
-            animations: { [weak self] in
-                self?.containerView.addSubview(childViewController.view)
-            },
-            completion: { [weak self] _ in
-                guard let self else { return }
-                childViewController.didMove(toParent: self)
-            },
-        )
+            addChild(childViewController)
 
-        childViewController.view.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            UIView.transition(
+                with: containerView,
+                duration: 0.3,
+                options: .transitionCrossDissolve,
+                animations: { [weak self] in
+                    self?.containerView.addSubview(childViewController.view)
+                },
+                completion: { [weak self] _ in
+                    guard let self else { return }
+                    childViewController.didMove(toParent: self)
+                },
+            )
+
+            childViewController.view.snp.makeConstraints {
+                $0.edges.equalToSuperview()
+            }
         }
     }
 }
