@@ -27,6 +27,7 @@ final class DetailViewModel {
                 switch action {
                 case .viewDidLoad:
                     self?.updateDisplayModel()
+                    self?.updateDescriptionViewIsHidden()
                 }
             })
             .disposed(by: disposeBag)
@@ -70,6 +71,11 @@ final class DetailViewModel {
             imagePath: mediaItem.artworkBasePath + "600x600bb.jpg",
         )
     }
+
+    private func updateDescriptionViewIsHidden() {
+        let isHidden = mediaItem.description.isEmpty
+        state.descriptionViewIsHidden.accept(isHidden)
+    }
 }
 
 extension DetailViewModel {
@@ -89,6 +95,7 @@ extension DetailViewModel {
             description: "",
             imagePath: "",
         ))
+        let descriptionViewIsHidden = BehaviorRelay<Bool>(value: false)
     }
 
     struct Item {

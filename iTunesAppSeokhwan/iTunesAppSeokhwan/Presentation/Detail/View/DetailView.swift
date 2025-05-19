@@ -78,7 +78,10 @@ final class DetailView: UIView {
         releaseDateContentView.update(header: "출시일", content: item.releaseDate)
         runningTimeContentView.update(header: "러닝타임", content: item.runningTime)
         descriptionContentView.update(header: "설명", content: item.description)
-        descriptionContentView.isHidden = item.description.isEmpty
+    }
+
+    func updateDescriptionViewIsHidden(_ isHidden: Bool) {
+        descriptionContentView.isHidden = isHidden
     }
 }
 

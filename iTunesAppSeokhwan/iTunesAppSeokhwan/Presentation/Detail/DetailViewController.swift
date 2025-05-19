@@ -53,6 +53,13 @@ private extension DetailViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.state.descriptionViewIsHidden
+            .asDriver(onErrorJustReturn: false)
+            .drive { [weak self] isHidden in
+                self?.detailView.updateDescriptionViewIsHidden(isHidden)
+            }
+            .disposed(by: disposeBag)
+
         detailView.didTapCloseButton
             .asDriver(onErrorJustReturn: ())
             .drive { [weak self] _ in
