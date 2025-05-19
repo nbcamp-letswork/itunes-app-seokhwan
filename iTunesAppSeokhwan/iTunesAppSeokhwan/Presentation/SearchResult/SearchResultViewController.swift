@@ -57,6 +57,13 @@ private extension SearchResultViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.state.pushToDetail
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] mediaItem in
+                self?.coordinator?.pushToDetail(with: mediaItem)
+            }
+            .disposed(by: disposeBag)
+
         viewModel.state.errorMessage
             .asDriver(onErrorJustReturn: "")
             .drive { [weak self] message in
@@ -71,6 +78,13 @@ private extension SearchResultViewController {
                       let parent = parent as? Embeddable else { return }
                 parent.clearSearchText()
                 self.coordinator?.switchTo(.home, in: parent)
+            }
+            .disposed(by: disposeBag)
+
+        searchResultView.didTapCell
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] index in
+                self?.viewModel.action.accept(.didTapCell(index))
             }
             .disposed(by: disposeBag)
     }

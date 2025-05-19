@@ -28,7 +28,6 @@ final class SearchResultCell: UITableViewCell {
 
     private let posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .init(systemName: "photo")
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         return imageView

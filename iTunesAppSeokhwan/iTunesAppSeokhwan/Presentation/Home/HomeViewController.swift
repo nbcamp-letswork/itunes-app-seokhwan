@@ -10,13 +10,15 @@ import RxSwift
 import RxCocoa
 
 final class HomeViewController: UIViewController {
+    private weak var coordinator: FlowCoordinator?
     private let viewModel: HomeViewModel
     private let disposeBag = DisposeBag()
 
     private let homeView = HomeView()
 
-    init(viewModel: HomeViewModel) {
+    init(viewModel: HomeViewModel, coordinator: FlowCoordinator) {
         self.viewModel = viewModel
+        self.coordinator = coordinator
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -48,10 +50,24 @@ private extension HomeViewController {
             }
             .disposed(by: disposeBag)
 
+        viewModel.state.pushToDetail
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] mediaItem in
+                self?.coordinator?.pushToDetail(with: mediaItem)
+            }
+            .disposed(by: disposeBag)
+
         viewModel.state.errorMessage
             .asDriver(onErrorJustReturn: "")
             .drive { [weak self] message in
                 self?.presentErrorAlert(with: message)
+            }
+            .disposed(by: disposeBag)
+
+        homeView.didTapCell
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { [weak self] indexPath in
+                self?.viewModel.action.accept(.didTapCell(indexPath))
             }
             .disposed(by: disposeBag)
     }

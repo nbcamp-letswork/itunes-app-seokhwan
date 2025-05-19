@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 final class ITunesAPIService {
     enum MediaType {
@@ -62,6 +63,16 @@ final class ITunesAPIService {
             return .failure(.invalidURL)
         }
 
+        let request = URLRequest(
+            url: url,
+            cachePolicy: .returnCacheDataElseLoad,
+        )
+
+        if let cachedResponse = URLCache.shared.cachedResponse(for: request) {
+            os_log("캐시 데이터 로드: \(url.absoluteString)")
+            return decode(from: cachedResponse.data)
+        }
+
         guard let (data, response) = try? await URLSession.shared.data(from: url),
               let httpResponse = response as? HTTPURLResponse else {
             return .failure(.noData)
@@ -71,10 +82,14 @@ final class ITunesAPIService {
             return .failure(.requestFailed(statusCode: httpResponse.statusCode))
         }
 
+        os_log("네트워크 데이터 로드: \(url.absoluteString)")
+        return decode(from: data)
+    }
+
+    private func decode(from data: Data) -> Result<[ContentDTO], NetworkError> {
         guard let resultsResponse = try? JSONDecoder().decode(ContentsDTO.self, from: data) else {
             return .failure(.decodingFailed)
         }
-
         return .success(resultsResponse.results)
     }
 }

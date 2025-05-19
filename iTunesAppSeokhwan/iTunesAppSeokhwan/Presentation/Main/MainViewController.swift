@@ -37,6 +37,11 @@ final class MainViewController: UIViewController, Embeddable {
         coordinator?.switchTo(.home, in: self)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationItem.largeTitleDisplayMode = .always
+    }
+
     func clearSearchText() {
         searchController.searchBar.text = ""
         searchController.isActive = false
@@ -56,7 +61,6 @@ private extension MainViewController {
         navigationItem.hidesSearchBarWhenScrolling = false
 
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.largeTitleDisplayMode = .always
         title = "Music"
     }
 

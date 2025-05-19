@@ -10,6 +10,9 @@ import RxSwift
 
 final class ContentRepository {
     private let service: ITunesAPIService
+    private let artworkRegex: NSRegularExpression? = {
+        try? NSRegularExpression(pattern: "\\d+x\\d+bb\\.jpg$")
+    }()
 
     init(service: ITunesAPIService) {
         self.service = service
@@ -25,7 +28,7 @@ final class ContentRepository {
         case .success(let dto):
             return .success(makeMediaItems(from: dto, of: mediaType))
         case .failure(let error):
-            return .failure(DomainError.networkError(error.localizedDescription))
+            return .failure(.networkError(error.localizedDescription))
         }
     }
 
@@ -66,8 +69,7 @@ final class ContentRepository {
     }
 
     private func toDomainArtworkBasePath(from path: String) -> String {
-        let pattern = "\\d+x\\d+bb\\.jpg$"
-        guard let regex = try? NSRegularExpression(pattern: pattern) else { return "" }
+        guard let regex = artworkRegex else { return "" }
 
         return regex.stringByReplacingMatches(
             in: path,

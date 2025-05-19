@@ -14,6 +14,7 @@ final class HomeViewModel {
     let state = State()
 
     private let useCase: MusicUseCase
+    private var music = [[MediaItem]]()
     private let disposeBag = DisposeBag()
 
     init(useCase: MusicUseCase) {
@@ -27,6 +28,8 @@ final class HomeViewModel {
                 switch action {
                 case .viewDidLoad:
                     self?.fetchMusic()
+                case .didTapCell(let indexPath):
+                    self?.pushToDetail(with: indexPath)
                 }
             })
             .disposed(by: disposeBag)
@@ -38,14 +41,17 @@ final class HomeViewModel {
 
             switch result {
             case .success(let music):
+                self.music = music
                 let items = music.enumerated().map { (index, element) in
                     element.map {
-                        Item(
+                        // spring, autumn 섹션은 고해상도 이미지 사용
+                        let imageFileName = index % 2 == 0 ? "600x600bb.jpg" : "200x200bb.jpg"
+                        return Item(
                             id: $0.id,
                             sectionIndex: index,
                             title: $0.title,
                             artist: $0.artist,
-                            albumImagePath: $0.artworkBasePath + "600x600bb.jpg",
+                            albumImagePath: $0.artworkBasePath + imageFileName,
                         )
                     }
                 }
@@ -55,15 +61,22 @@ final class HomeViewModel {
             }
         }
     }
+
+    private func pushToDetail(with indexPath: IndexPath) {
+        let mediaItem = music[indexPath.section][indexPath.item]
+        state.pushToDetail.accept(mediaItem)
+    }
 }
 
 extension HomeViewModel {
     enum Action {
         case viewDidLoad
+        case didTapCell(IndexPath)
     }
 
     struct State {
         let items = BehaviorRelay<[[Item]]>(value: [])
+        let pushToDetail = PublishRelay<MediaItem>()
         let errorMessage = PublishRelay<String>()
     }
 

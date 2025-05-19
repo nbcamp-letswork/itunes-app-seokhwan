@@ -11,7 +11,6 @@ import SnapKit
 final class MusicCardCell: UICollectionViewCell {
     private let albumImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = .init(systemName: "music.note.list")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView

@@ -15,6 +15,7 @@ final class SearchResultView: UIView {
     private let disposeBag = DisposeBag()
 
     let didTapSearchText = PublishRelay<Void>()
+    let didTapCell = PublishRelay<Int>()
 
     private let searchTextLabel: UILabel = {
         let label = UILabel()
@@ -103,6 +104,12 @@ private extension SearchResultView {
         tableView.rx.willBeginDragging
             .bind { [weak self] in
                 self?.window?.endEditing(true)
+            }
+            .disposed(by: disposeBag)
+
+        tableView.rx.itemSelected
+            .bind { [weak self] indexPath in
+                self?.didTapCell.accept(indexPath.row)
             }
             .disposed(by: disposeBag)
     }
