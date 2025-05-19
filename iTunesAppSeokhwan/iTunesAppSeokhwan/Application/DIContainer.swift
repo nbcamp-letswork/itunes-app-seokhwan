@@ -13,7 +13,7 @@ final class DIContainer {
 
     init() {
         service = ITunesAPIService()
-        repository = ContentRepository(service: service)
+        repository = DefaultContentRepository(service: service)
     }
 
     func makeHomeViewModel() -> HomeViewModel {

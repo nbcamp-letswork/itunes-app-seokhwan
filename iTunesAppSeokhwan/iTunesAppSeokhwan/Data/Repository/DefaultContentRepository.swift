@@ -1,5 +1,5 @@
 //
-//  ContentRepository.swift
+//  DefaultContentRepository.swift
 //  iTunesAppSeokhwan
 //
 //  Created by youseokhwan on 5/15/25.
@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-final class ContentRepository {
+final class DefaultContentRepository: ContentRepository {
     private let service: ITunesAPIService
     private let artworkRegex: NSRegularExpression? = {
         try? NSRegularExpression(pattern: "\\d+x\\d+bb\\.jpg$")
