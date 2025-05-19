@@ -63,5 +63,13 @@ private extension MusicHeader {
         stackView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+
+        titleLabel.snp.makeConstraints { make in
+            make.height.equalTo(30)
+        }
+
+        subtitleLabel.snp.makeConstraints { make in
+            make.height.equalTo(20)
+        }
     }
 }

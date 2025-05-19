@@ -63,12 +63,6 @@ private extension SearchResultCell {
 
         containerView.layer.cornerRadius = 8
         containerView.clipsToBounds = true
-
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.15
-        layer.shadowOffset = CGSize(width: 0, height: 4)
-        layer.shadowRadius = 8
-        layer.masksToBounds = false
     }
 
     func setHierarchy() {

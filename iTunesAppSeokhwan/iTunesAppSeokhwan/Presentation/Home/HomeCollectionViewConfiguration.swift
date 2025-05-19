@@ -87,7 +87,7 @@ extension HomeView {
 
             let headerSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(48),
+                heightDimension: .absolute(50),
             )
             let header = NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: headerSize,
@@ -123,7 +123,7 @@ extension HomeView {
 
             let headerSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1),
-                heightDimension: .absolute(48),
+                heightDimension: .absolute(50),
             )
             let header = NSCollectionLayoutBoundarySupplementaryItem(
                 layoutSize: headerSize,

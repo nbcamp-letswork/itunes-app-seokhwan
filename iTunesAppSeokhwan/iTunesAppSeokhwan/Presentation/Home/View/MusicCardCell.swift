@@ -59,7 +59,11 @@ private extension MusicCardCell {
         contentView.layer.cornerRadius = 8
         contentView.clipsToBounds = true
 
-        // Card 그림자 설정
+        // Cell 그림자 설정
+        layer.shadowPath = UIBezierPath(
+            roundedRect: bounds,
+            cornerRadius: contentView.layer.cornerRadius,
+        ).cgPath
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.15
         layer.shadowOffset = CGSize(width: 0, height: 4)
